@@ -1,0 +1,13 @@
+package com.enicar.taskManagementApi.dto;
+
+import java.time.LocalDateTime;
+
+public record TaskResponse(
+        Long id,
+        String title,
+        String description,
+        Boolean completed,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {
+}
