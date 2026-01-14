@@ -47,6 +47,7 @@ public class TaskController {
             log.info("GET /tasks/{} - Successfully retrieved task", id);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
+            log.error("GET /tasks/{} - Task not found: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -61,6 +62,7 @@ public class TaskController {
             log.info("PUT /tasks/{} - Successfully updated task", id);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
+            log.warn("PUT /tasks/{} - Failed to update: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -71,8 +73,9 @@ public class TaskController {
         try {
             taskService.deleteTask(id);
             log.info("DELETE /tasks/{} - Successfully deleted task", id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            log.warn("DELETE /tasks/{} - Failed to delete: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
