@@ -56,7 +56,7 @@ jobs:
         with:
           target: 'http://localhost:8080'
           artifact_name: 'zap-scan-report-${{ steps.timestamp.outputs.date }}'
-          allow_issue_writing: 'true'
+          allow_issue_writing: 'false'
           # Uncomment and create .zap/rules.tsv to customize scan rules
           # rules_file_name: '.zap/rules.tsv'
           # cmd_options: '-a'
