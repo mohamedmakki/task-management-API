@@ -2,6 +2,10 @@
 
 name: CI workflow
 
+permissions:
+  contents: read
+  pull-requests: read
+
 on:
   push:
     branches:
@@ -11,6 +15,17 @@ on:
       [ main ]
   workflow_dispatch:
 jobs:
+  scan:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
   build:
     runs-on: ubuntu-latest
     steps:
