@@ -32,7 +32,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/task-management-api
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/task-management-api
           tags: |
             type=raw,value=latest
             type=sha,prefix={{branch}}-
@@ -45,5 +45,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/task-management-api:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/task-management-api:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/task-management-api:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/task-management-api:buildcache,mode=max
