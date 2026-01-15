@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+
+# IDE
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+
+# Build artifacts (target/ is built inside Docker, so exclude it)
+target/
+
+# Logs (will be created in container)
+logs/
+*.log
+
+# Data (will be mounted as volume)
+data/
+
+# Environment files (use .env.example as template, don't copy actual .env)
+.env
+.env.local
+
+# Docker files (no need to copy these into the image)
+docker-compose.yml
+docker-compose.*.yml
+
+# Documentation
+README.md
+
+# OS
+.DS_Store
+Thumbs.db

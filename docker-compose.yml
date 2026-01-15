@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  api:
+    # Build the image from the Dockerfile if not already built
+    build: .
+    # Image used to run the container
+    image: task-management-api:local
+    container_name: task-management-api
+    ports:
+      # If APP_PORT is set in .env, use it.
+      # If .env file is missing or variable is empty, default to 8080.
+      - "${APP_PORT:-8080}:8080"
+    # Mount directories for logs and data for persistence
+    volumes:
+      - ${LOG_PATH:-./logs}:/logs
+      - ${DATA_PATH:-./data}:/data
+    # environment:
+    #   - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default} # Set active Spring profile
+    # restart: unless-stopped # Restart the container unless it is explicitly stopped
