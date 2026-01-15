@@ -1,0 +1,67 @@
+# This workflow performs a DAST scan using OWASP ZAP after every push to the main branch.
+name: DAST Scan
+
+permissions:
+  contents: read
+  issues: write # For creating issues on vulnerabilities found
+  actions: write # For uploading artifacts to the workflow run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  zap-scan:
+    name: OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      - name: Build application
+        run: mvn clean package -DskipTests
+
+      - name: Start application
+        run: |
+          java -jar -Dserver.port=8080 target/*.jar &
+          echo $! > app.pid
+          echo "Application started with PID: $(cat app.pid)"
+
+      - name: Wait for application to be ready
+        run: |
+          echo "Waiting for application to start..."
+          timeout 90 bash -c 'until curl -f http://localhost:8080/actuator/health || curl -f http://localhost:8080; do sleep 2; done'
+          echo "Application is ready!"
+
+      # Extract timestamp for artifact name
+      - name: Set scan timestamp
+        id: timestamp
+        run: echo "date=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Run ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: 'http://localhost:8080'
+          artifact_name: 'zap-scan-report-${{ steps.timestamp.outputs.date }}'
+          allow_issue_writing: 'false'
+          # Uncomment and create .zap/rules.tsv to customize scan rules
+          # rules_file_name: '.zap/rules.tsv'
+          # cmd_options: '-a'
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+            rm app.pid
+          fi
